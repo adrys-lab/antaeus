@@ -7,4 +7,6 @@ kotlinProject()
 dependencies {
     implementation(project(":pleo-antaeus-data"))
     compile(project(":pleo-antaeus-models"))
+    compile(project(":pleo-antaeus-conf"))
+    compile("com.github.shyiko.skedule:skedule:0.4.0")
 }

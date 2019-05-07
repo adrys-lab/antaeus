@@ -1,9 +1,9 @@
 server:
   port: 7000
-  executorThreadPool: 100
+  executorThreadPool: 10
 
 domain:
   fromMail: info@pleo.io
   failureMail: billing.failure@pleo.io
-  billingExecutionDay: 1
+  billingScheduleDelayExpression: "1 of jan-dec 00:00"
   failureMaxRetries: 3

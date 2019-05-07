@@ -14,7 +14,7 @@ object DomainConfig : ConfigSpec("domain") {
     val fromMail by required<String>()
     val failureMail by required<String>()
     val failureMaxRetries by required<Int>()
-    val billingExecutionDay by required<Int>()
+    val billingScheduleDelayExpression by required<String>()
 }
 
 object Configuration {
