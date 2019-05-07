@@ -7,9 +7,13 @@ package io.pleo.antaeus.rest
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
+import io.javalin.validation.JavalinValidation
+import io.pleo.antaeus.app.Configuration
+import io.pleo.antaeus.app.ServerConfig
 import io.pleo.antaeus.core.exceptions.EntityNotFoundException
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -20,7 +24,16 @@ class AntaeusRest (
 ) : Runnable {
 
     override fun run() {
-        app.start(7000)
+        //port injected via configuration file
+        val port = Configuration.config[ServerConfig.port]
+        app.start(port)
+        JavalinValidation.register(InvoiceStatus::class.java) {
+            InvoiceStatus.valueOf(it)
+        }
+    }
+
+    fun stop() {
+        app.stop()
     }
 
     // Set up Javalin rest app
@@ -55,6 +68,18 @@ class AntaeusRest (
                        // URL: /rest/v1/invoices
                        get {
                            it.json(invoiceService.fetchAll())
+                       }
+
+                       path("bystatus") {
+                           // URL: /rest/v1/invoices/bystatus/{status}
+                           get(":status") {
+                               val status = it.validatedPathParam("status")
+                                       .notNullOrEmpty()
+                                       .asClass<InvoiceStatus>()
+                                       .getOrThrow()
+
+                               it.json(invoiceService.fetchByStatus(status))
+                           }
                        }
 
                        // URL: /rest/v1/invoices/{:id}

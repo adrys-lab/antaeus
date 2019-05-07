@@ -80,4 +80,12 @@ class AntaeusDal(private val db: Database) {
 
         return fetchCustomer(id!!)
     }
+
+    fun fetchInvoiceByStatus(status: InvoiceStatus): List<Invoice> {
+        return transaction(db) {
+            InvoiceTable
+                .select { InvoiceTable.status.eq(status.name) }
+                .map { it.toInvoice() }
+        }
+    }
 }
