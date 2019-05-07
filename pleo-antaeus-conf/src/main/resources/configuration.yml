@@ -1,0 +1,9 @@
+server:
+  port: 7000
+  executorThreadPool: 100
+
+domain:
+  fromMail: info@pleo.io
+  failureMail: billing.failure@pleo.io
+  billingExecutionDay: 1
+  failureMaxRetries: 3
