@@ -14,7 +14,25 @@ import com.fasterxml.jackson.module.kotlin.readValue
 inline fun <reified T : Any> String.deserialize(): T =
         jacksonObjectMapper().readValue(this)
 
+internal fun addFivePendingInvoices(dal: AntaeusDal) {
+    (1..5).forEach {
+        dal.createCustomer(
+                currency = Currency.values()[Random.nextInt(0, Currency.values().size)]
+        )?.let { customer ->
+            dal.createInvoice(
+                amount = Money(
+                        value = BigDecimal(Random.nextDouble(10.0, 500.0)),
+                        currency = Currency.EUR
+                ),
+                customer = customer,
+                status = InvoiceStatus.PENDING
+            )
+        }
+    }
+}
+
 internal fun setupInitialData(dal: AntaeusDal) {
+
     val customers = (1..5).mapNotNull {
         dal.createCustomer(
             currency = Currency.values()[Random.nextInt(0, Currency.values().size)]
@@ -22,14 +40,14 @@ internal fun setupInitialData(dal: AntaeusDal) {
     }
 
     customers.forEach { customer ->
-        (1..5).forEach {
+        (1..10).forEach {
             dal.createInvoice(
                 amount = Money(
                     value = BigDecimal(Random.nextDouble(10.0, 500.0)),
                     currency = customer.currency
                 ),
                 customer = customer,
-                status = if (it == 1) InvoiceStatus.PENDING else InvoiceStatus.PAID
+                status = InvoiceStatus.PAID
             )
         }
     }

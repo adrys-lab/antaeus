@@ -1,5 +1,6 @@
 package io.pleo.antaeus.rest
 
+import addFivePendingInvoices
 import deserialize
 import getPaymentProvider
 import io.pleo.antaeus.core.services.BillingService
@@ -9,6 +10,7 @@ import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
 import io.pleo.antaeus.models.Customer
+import io.pleo.antaeus.models.Invoice
 import junit.framework.TestCase
 import khttp.get
 import org.jetbrains.exposed.sql.Database
@@ -83,5 +85,16 @@ class TestIntegration : TestCase() {
     fun testFiveCustomers() {
         val customers = get(url = url + "/rest/v1/customers").text.deserialize<List<Customer>>()
         assertEquals(5, customers.size)
+    }
+
+    fun testFiftyPaidInvoices() {
+        val invoices = get(url = url + "/rest/v1/invoices/bystatus/PAID").text.deserialize<List<Invoice>>()
+        assertEquals(50, invoices.size)
+    }
+
+    fun testFivePendingInvoices() {
+        addFivePendingInvoices(antaeusDal)
+        val invoices = get(url = url + "/rest/v1/invoices/bystatus/PENDING").text.deserialize<List<Invoice>>()
+        assertEquals(5, invoices.size)
     }
 }
