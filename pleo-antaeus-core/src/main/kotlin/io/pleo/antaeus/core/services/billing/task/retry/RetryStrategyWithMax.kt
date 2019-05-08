@@ -15,18 +15,21 @@ class RetryStrategyWithMax: RetryStrategy {
 
         val maxRetries = Configuration.config[DomainConfig.invoiceMaxRetries]
 
-        if(executionTime > maxRetries) {
+        if(executionTime >= maxRetries) {
             logger.warn{"Retries limit $maxRetries reached for invoice ${invoice.id}, result is FAILURE" }
             return false
         }
 
-        val retryResult = function.invoke(invoice)
-
-        if(!retryResult) {
+        try {
+            val retryResult = function.invoke(invoice)
+            if(!retryResult) {
+                return retry(executionTime.plus(1), function, invoice )
+            }
+            logger.info{"Retry function execution for invoice ${invoice.id}, result is SUCCESSFUL after ${executionTime.plus(1) } retries" }
+        } catch (ex: Exception) {
+            logger.error(ex) {"Caught Exception in retry function execution for invoice ${invoice.id}, execution time ${executionTime} " }
             return retry(executionTime.plus(1), function, invoice )
         }
-
-        logger.info{"Retry function execution for invoice ${invoice.id}, result is SUCCESSFUL after ${executionTime.plus(1) }  retries" }
 
         return true
     }
