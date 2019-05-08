@@ -3,11 +3,10 @@ package io.pleo.antaeus.core.services.billing.task.pending
 import com.github.shyiko.skedule.Schedule
 import io.pleo.antaeus.app.Configuration
 import io.pleo.antaeus.app.DomainConfig
-import io.pleo.antaeus.app.ServerConfig
 import mu.KotlinLogging
 import java.time.ZonedDateTime
+import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 
@@ -15,12 +14,7 @@ class PendingBillingTaskScheduler(
         private val pendingBillingTask: PendingBillingTask) {
 
     private val logger = KotlinLogging.logger {}
-    private val executor = ScheduledThreadPoolExecutor(Configuration.config[ServerConfig.executorThreadPool])
-
-    // initializer block
-    init {
-        executor.removeOnCancelPolicy = true
-    }
+    private val executor = Executors.newSingleThreadScheduledExecutor()
 
     //this task runs on 1st day of each month for process all PENDING invoices
 
