@@ -1,9 +1,6 @@
 package io.pleo.antaeus.core.services.billing.task.pending
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
 import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
 import io.pleo.antaeus.core.exceptions.NetworkException
@@ -115,6 +112,30 @@ class PendingBillingTaskHandlerTest {
 
         Assertions.assertTrue(FailureInvoiceObserver.instance.hasFailures())
         Assertions.assertEquals(failureInvoice, FailureInvoiceObserver.instance.poll())
+    }
+
+    @Test
+    fun `assert NetworkException dont reach limit`() {
+
+        var times = 0
+        coEvery {
+            paymentProvider.charge(any())
+        } coAnswers {
+            times = times.plus(1)
+            if(times == 2) {
+                true
+            } else {
+                throw NetworkException()
+            }
+        }
+
+        failureBillingTaskHandler = PendingBillingTaskHandler(customerService, paymentProvider, mailSender)
+
+        failureBillingTaskHandler.handle(failureInvoice)
+
+        verify(exactly = 2) { paymentProvider.charge(any())}
+
+        Assertions.assertFalse(FailureInvoiceObserver.instance.hasFailures())
     }
 
 }
