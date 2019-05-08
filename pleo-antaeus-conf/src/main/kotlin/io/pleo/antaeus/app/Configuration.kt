@@ -13,6 +13,7 @@ object ServerConfig : ConfigSpec("server") {
 object DomainConfig : ConfigSpec("domain") {
     val invoiceMaxRetries by required<Int>()
     val billingScheduleDelayExpression by required<String>()
+    val failureBillingScheduleDelayHours by required<Long>()
 }
 
 object Configuration {

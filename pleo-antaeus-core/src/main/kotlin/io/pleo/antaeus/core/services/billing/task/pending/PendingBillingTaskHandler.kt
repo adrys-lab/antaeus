@@ -32,7 +32,7 @@ class PendingBillingTaskHandler(customerService: CustomerService,
             is NetworkException -> {
                 /*
                  * for network exceptions for pending invoices:
-                 * - Retry the execution with a MAX of 3 times.
+                 * - Retry the execution with a MAX of 3 times (via configuration.yml).
                  * - If after retries, its still failure, add the invoice to the Failure Observer to be treated afterwards as FAILURE.
                  * - If after retries, is successful, return true as valid invoice charge.
                  */
