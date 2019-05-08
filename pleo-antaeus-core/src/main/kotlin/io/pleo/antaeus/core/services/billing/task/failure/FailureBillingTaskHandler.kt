@@ -19,8 +19,8 @@ class FailureBillingTaskHandler(customerService: CustomerService,
     override fun handleException(ex: Exception, invoice: Invoice): Boolean {
 
         /*
-         * Occurred exceptions for failure invoices --> log them and send an email to be further investigated.
-         * If this happens means, this invoice failed when was initially PENDING, also its retries, and now treated as Failure.
+         * Occurred exceptions for failure invoices --> log them and send an email to IT and billing to be further investigated.
+         * If this happens means, this invoice failed when was initially PENDING, (also its retries) and now treated as Failure.
          * NO retry failures.
          */
         logger.error(ex) {"Error trying to charge FAILURE invoice ${invoice.id} for customer ${invoice.customerId}. Proceed to send an email." }

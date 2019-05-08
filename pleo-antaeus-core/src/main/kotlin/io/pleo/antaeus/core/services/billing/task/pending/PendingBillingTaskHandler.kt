@@ -36,8 +36,10 @@ class PendingBillingTaskHandler(customerService: CustomerService,
                  * - If after retries, its still failure, add the invoice to the Failure Observer to be treated afterwards as FAILURE.
                  * - If after retries, is successful, return true as valid invoice charge.
                  */
+                logger.info(ex) {"Network exception for invoice ${invoice.id} for customer ${invoice.customerId}. Proceed to retry its charging." }
                 val retryResult = RetryStrategyWithMax().retry(0, { tryCharge(invoice) }, invoice)
                 if(!retryResult) {
+                    logger.info(ex) {"After retries for invoice ${invoice.id} result keeps being failure, so proceed to add it to the Failure Queue." }
                     FailureInvoiceObserver.instance.notify(invoice)
                 } else {
                     return true

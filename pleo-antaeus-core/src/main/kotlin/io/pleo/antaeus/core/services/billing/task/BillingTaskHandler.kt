@@ -36,15 +36,18 @@ abstract class BillingTaskHandler(
 
         if(!result) {
 
-            //This means the customer has not enough balance, meaning, customer can not pay, so proceed to save customer as NOT ACTIVE.
+            //This means the customer has not enough balance, meaning, customer can not pay, so proceed to save customer as NOT ACTIVE and send an email to him.
             logger.info{"Payment provider charge result is FALSE for invoice ${invoice.id}, so customer has not enough funds. Proceed to update customer ${invoice.customerId} as NOT ACTIVE." }
             val customer = customerService.fetch(invoice.customerId)
             val notActiveCustomer = Customer(customer.id, customer.currency, false)
+
             customerService.update(notActiveCustomer)
 
-            //After the customer has been set as NOT ACTIVE, proceed to notify the him with that new state, via MAIL.
+            //Proceed to notify the customer via MAIL abou the new status to make him fix this issue.
             mailSender.send(invoice)
+
         } else {
+
             logger.info{"Successfully charged invoice ${invoice.id}, with amount ${invoice.amount.value}  ${invoice.amount.currency} for customer ${invoice.customerId}." }
         }
         return result
