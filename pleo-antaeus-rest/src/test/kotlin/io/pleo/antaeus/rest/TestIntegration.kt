@@ -3,10 +3,9 @@ package io.pleo.antaeus.rest
 import addFivePendingInvoices
 import deserialize
 import getPaymentProvider
-import io.pleo.antaeus.core.services.billing.task.BillingTaskScheduler
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
-import io.pleo.antaeus.core.services.billing.task.BillingExecutionTask
+import io.pleo.antaeus.core.services.billing.task.pending.PendingBillingTask
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
@@ -46,7 +45,8 @@ class TestIntegration : TestCase() {
 
         val invoiceService = InvoiceService(dal = antaeusDal)
         val customerService = CustomerService(dal = antaeusDal)
-        val billingService = BillingTaskScheduler(getPaymentProvider(), BillingExecutionTask())
+
+        val billingTask = PendingBillingTask(customerService, invoiceService, getPaymentProvider())
 
         var app = AntaeusRest(
                 invoiceService = invoiceService,

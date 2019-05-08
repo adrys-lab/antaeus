@@ -1,7 +1,8 @@
-package io.pleo.antaeus.core.services.billing.task
+package io.pleo.antaeus.core.services.billing.task.pending
 
 import io.mockk.mockk
-import io.pleo.antaeus.core.external.PaymentProvider
+import io.pleo.antaeus.core.services.billing.task.pending.PendingBillingTask
+import io.pleo.antaeus.core.services.billing.task.pending.PendingBillingTaskScheduler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
@@ -10,17 +11,16 @@ import java.time.temporal.TemporalAdjusters
 import java.util.concurrent.TimeUnit
 
 
-class BillingTaskSchedulerTest {
+class PendingBillingTaskSchedulerTest {
 
-    private val paymentProvider = mockk<PaymentProvider> {}
-    private val billingExecutionTask = mockk<BillingExecutionTask> {}
+    private val billingExecutionTask = mockk<PendingBillingTask> {}
 
-    private val billingWrapper = BillingTaskScheduler(paymentProvider, billingExecutionTask)
+    private val billingWrapper = PendingBillingTaskScheduler(billingExecutionTask)
 
     @Test
     fun `test scheduling delay until next 1st`() {
 
-        val schedule = billingWrapper.schedule()
+        val schedule = billingWrapper.schedulePendingInvoices()
 
         val currentTime = ZonedDateTime.now()
 
