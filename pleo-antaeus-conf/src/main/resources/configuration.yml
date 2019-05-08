@@ -3,7 +3,5 @@ server:
   executorThreadPool: 10
 
 domain:
-  fromMail: info@pleo.io
-  failureMail: billing.failure@pleo.io
   billingScheduleDelayExpression: "1 of jan-dec 00:00"
-  failureMaxRetries: 3
+  invoiceMaxRetries: 3

@@ -70,11 +70,12 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    fun createCustomer(currency: Currency): Customer? {
+    fun createCustomer(currency: Currency, active: Boolean): Customer? {
         val id = transaction(db) {
             // Insert the customer and return its new id.
             CustomerTable.insert {
                 it[this.currency] = currency.toString()
+                it[this.active] = active
             } get CustomerTable.id
         }
 
@@ -86,6 +87,28 @@ class AntaeusDal(private val db: Database) {
             InvoiceTable
                 .select { InvoiceTable.status.eq(status.name) }
                 .map { it.toInvoice() }
+        }
+    }
+
+    fun updateInvoice(invoice: Invoice): Invoice {
+        return transaction(db) {
+            InvoiceTable
+                    .update ({ InvoiceTable.id eq invoice.id }) {
+                        it[currency] = invoice.amount.currency.toString()
+                        it[value] = invoice.amount.value
+                        it[customerId] = invoice.customerId
+                        it[status] = invoice.status.toString()
+                    }.let { invoice }
+        }
+    }
+
+    fun updateCustomer(customer: Customer): Customer {
+        return transaction(db) {
+            CustomerTable
+                    .update ({ CustomerTable.id eq customer.id }) {
+                        it[currency] = customer.currency.toString()
+                        it[active] = customer.active
+                    }.let { customer }
         }
     }
 }

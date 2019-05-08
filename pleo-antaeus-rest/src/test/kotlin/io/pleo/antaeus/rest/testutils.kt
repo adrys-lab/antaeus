@@ -1,4 +1,5 @@
-
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.models.Currency
@@ -8,16 +9,14 @@ import io.pleo.antaeus.models.Money
 import java.math.BigDecimal
 import kotlin.random.Random
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-
 inline fun <reified T : Any> String.deserialize(): T =
         jacksonObjectMapper().readValue(this)
 
 internal fun addFivePendingInvoices(dal: AntaeusDal) {
     (1..5).forEach {
         dal.createCustomer(
-                currency = Currency.values()[Random.nextInt(0, Currency.values().size)]
+                currency = Currency.values()[Random.nextInt(0, Currency.values().size)],
+                active = true
         )?.let { customer ->
             dal.createInvoice(
                 amount = Money(
@@ -35,7 +34,8 @@ internal fun setupInitialData(dal: AntaeusDal) {
 
     val customers = (1..5).mapNotNull {
         dal.createCustomer(
-            currency = Currency.values()[Random.nextInt(0, Currency.values().size)]
+            currency = Currency.values()[Random.nextInt(0, Currency.values().size)],
+            active = true
         )
     }
 

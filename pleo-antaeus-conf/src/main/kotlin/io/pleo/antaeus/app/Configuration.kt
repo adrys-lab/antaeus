@@ -11,9 +11,7 @@ object ServerConfig : ConfigSpec("server") {
 
 //Configurations regarding Business logic and Domain specific.
 object DomainConfig : ConfigSpec("domain") {
-    val fromMail by required<String>()
-    val failureMail by required<String>()
-    val failureMaxRetries by required<Int>()
+    val invoiceMaxRetries by required<Int>()
     val billingScheduleDelayExpression by required<String>()
 }
 
