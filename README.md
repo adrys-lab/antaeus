@@ -61,6 +61,17 @@
         - Active or not active --> [ADDED] -> a customer can be active for our business, or not. If some invoice charge problems happen
         - the Timezone of the customer --> [NOT ADDED] -> If a customer is from a country with different timezones, it should be taken into account when charge him an invoice.
 
+### Step 5
+- check Gradle and Docker executions
+
+### Comments about the solution
+- Different solutions could be achieved.
+- For example, retries could be avoided and just post-pose the charge for 3h, or viceversa, by retrying but not scheduling a second Process.
+- I'm aware i implemented a really deffensive solution.
+- How to handle other exceptions could be done different too, like simulate a call to the customer (VoIP) or creating a Ticket in a Task Tracker System (Jira ?).
+- If Timezones would be added in the Customer, then we could have the problem that invoice charge is done before 1st of month, depending if Timezone Offset is lower of our Server Timezone.
+- One solution for that would be to schedule the PENDING invoices process for later of 00:00.
+
 ## Antaeus
 
 Antaeus (/ænˈtiːəs/), in Greek mythology, a giant of Libya, the son of the sea god Poseidon and the Earth goddess Gaia. He compelled all strangers who were passing through the country to wrestle with him. Whenever Antaeus touched the Earth (his mother), his strength was renewed, so that even if thrown to the ground, he was invincible. Heracles, in combat with him, discovered the source of his strength and, lifting him up from Earth, crushed him to death.
