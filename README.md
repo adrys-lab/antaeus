@@ -80,11 +80,20 @@
 - Another endpoint to force process PENDING invoices could be added to the REST layer ('/rest/v1/invoices/process'), this would allow easy-test too, but i didn't want to add any public REST resource like this as it exposes internal business procedures.
     - By contrast, we could expose this resource under user privileges/rights, but i considered this feature out of the scope of this Challenge.
 
-### Added libraries
+## Added libraries
 - khttp:khttp:0.1.0             --> allows to execute Http requests in a fashion-easy way for Kotlin
 - junit:junit:4.12              --> allows to execute a test case for the end-to-end and integration tests present in the 'rest' module
 - shyiko.skedule:skedule:0.4.0  --> allows to parse Schedule expressions in a human friendly syntax. It allows to parse the configuration.yml schedule expression "1 of jan-dec 00:00"
 - uchuhimo:konf                 --> Is a library that allows easy-way for platform Configuration for Kotlin in several formats. Used in the new Module 'conf'.
+
+## Tests
+- I added integration tests in rest module
+- I added the most important core services unit testing
+- I needed to get familiar with mockk library, which i found really useful and easy-to-use
+
+## Feelings
+- I really enjoyed working with Kotlin
+- I have had to get in touch and familiar with it, but after a day of reading, i found it super powerful, easy-to-use, robust and pretty lightweight.
 
 
 ## Antaeus
