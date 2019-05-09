@@ -65,12 +65,16 @@
 - check Gradle and Docker executions
 
 ### Comments about the solution
-- Different solutions could be achieved.
+- Many different solutions could be achieved for the exposed logic problems.
 - For example, retries could be avoided and just post-pose the charge for 3h, or viceversa, by retrying but not scheduling a second Process.
-- I'm aware i implemented a really deffensive solution.
+    - I'm aware i implemented a really deffensive solution.
 - How to handle other exceptions could be done different too, like simulate a call to the customer (VoIP) or creating a Ticket in a Task Tracker System (Jira ?).
 - If Timezones would be added in the Customer, then we could have the problem that invoice charge is done before 1st of month, depending if Timezone Offset is lower of our Server Timezone.
-- One solution for that would be to schedule the PENDING invoices process for later of 00:00.
+    - One solution for that would be to schedule the PENDING invoices process for later of 00:00.
+    - Or another would be to schedule a single task for each Invoice, in a Thread Pool Executor (1 per invoice), being executed based on the TimeZone of the customer.
+        - I discarded this solution because of the huge resources that this would consume and how expensive it would be.
+- Another endpoint to force process PENDING invoices could be added to the REST layer ('/rest/v1/invoices/process'), this would allow easy-test too, but i didn't want to add any public REST resource like this as it exposes internal business procedures.
+    - By contrast, we could expose this resource under user privileges/rights, but i considered this feature out of the scope of this Challenge.
 
 ## Antaeus
 
