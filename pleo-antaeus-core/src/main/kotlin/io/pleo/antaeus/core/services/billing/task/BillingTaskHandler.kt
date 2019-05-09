@@ -13,7 +13,7 @@ import mu.KotlinLogging
 abstract class BillingTaskHandler(
         private val customerService: CustomerService,
         private val paymentProvider: PaymentProvider,
-        val mailSender: MailSender) {
+        protected val mailSender: MailSender) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -30,7 +30,7 @@ abstract class BillingTaskHandler(
      * executes payment provider charge + log result.
      * If some exception is thrown, it will be handled and treated in the caller method.
      */
-    fun tryCharge(invoice: Invoice): Boolean {
+    protected fun tryCharge(invoice: Invoice): Boolean {
 
         val result = paymentProvider.charge(invoice)
 
@@ -54,7 +54,7 @@ abstract class BillingTaskHandler(
     }
 
     //Each extended class decides what to do with the given exceptions
-    abstract fun handleException(ex: Exception, invoice: Invoice): Boolean
+    protected abstract fun handleException(ex: Exception, invoice: Invoice): Boolean
 }
 
 internal fun getMailSender(): MailSender {

@@ -6,15 +6,15 @@ import io.pleo.antaeus.app.DomainConfig
 import mu.KotlinLogging
 import java.time.ZonedDateTime
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 class PendingBillingTaskScheduler(
-        private val pendingBillingTask: PendingBillingTask) {
+        private val pendingBillingTask: PendingBillingTask,
+        private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()) {
 
     private val logger = KotlinLogging.logger {}
-
-    private val executor = Executors.newSingleThreadScheduledExecutor()
 
     /*
      * this task runs periodically on 1st day of each month for process all PENDING invoices

@@ -15,9 +15,9 @@ import mu.KotlinLogging
 class PendingBillingTask(
         private val customerService: CustomerService,
         private val invoiceService: InvoiceService,
-        private val paymentProvider: PaymentProvider) : Runnable {
-
-    private val pendingBillingTaskHandler = PendingBillingTaskHandler(customerService, paymentProvider, getMailSender())
+        private val paymentProvider: PaymentProvider,
+        private val pendingBillingTaskHandler: PendingBillingTaskHandler = PendingBillingTaskHandler(customerService, paymentProvider, getMailSender())
+    ) : Runnable {
 
     private val logger = KotlinLogging.logger {}
 

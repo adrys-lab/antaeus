@@ -53,11 +53,11 @@ fun main() {
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
 
-    // scheduleFailureInvoices Billing Task scheduler
+    // Creates the pending Execution task to be run under Scheduler framework.
+    val pendingBillingTask = PendingBillingTask(customerService, invoiceService, getPaymentProvider())
 
-    val billingTask = PendingBillingTask(customerService, invoiceService, getPaymentProvider())
-
-    PendingBillingTaskScheduler(billingTask)
+    //Schedules the Pending Billing Task, executed periodically under PendingBillingTaskScheduler.
+    PendingBillingTaskScheduler(pendingBillingTask)
             .schedulePendingInvoices()
 
     // Create REST web service
