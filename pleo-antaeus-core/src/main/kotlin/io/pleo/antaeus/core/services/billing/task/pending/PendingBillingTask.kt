@@ -37,10 +37,11 @@ class PendingBillingTask(
                     }
                 }
 
+        logger.info { "PENDING Invoices process finished successfully." }
+
         /*
          * After all PENDING invoices has been treated, check if some of them has been Failure.
          * Failure means some Network exception happened.
-         * If there are failure's schedule a new process ->  FailureBillingTaskScheduler
          */
         if(FailureInvoiceObserver.instance.hasFailures()) {
            val failureBillingTask = FailureBillingTask(invoiceService, FailureBillingTaskHandler(customerService, paymentProvider, getMailSender()))

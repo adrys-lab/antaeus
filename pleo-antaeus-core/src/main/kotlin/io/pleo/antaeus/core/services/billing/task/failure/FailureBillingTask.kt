@@ -28,6 +28,7 @@ class FailureBillingTask(
             }
         }
 
+        logger.info { "FAILURE Invoices process finished successfully." }
     }
 
 }

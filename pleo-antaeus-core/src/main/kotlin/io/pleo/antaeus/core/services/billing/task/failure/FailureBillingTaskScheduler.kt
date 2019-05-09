@@ -14,20 +14,21 @@ class FailureBillingTaskScheduler(
 
     private val logger = KotlinLogging.logger {}
 
+    private val executor = Executors.newSingleThreadScheduledExecutor()
+
     /*
-     * Schedules a new task to be executed once, with a delay of 3h.
+     * Schedules a new task to be executed once, with a delay of 3h (by configuration file).
+     * To process al failure invoices present in FailureInvoiceObserver.instance.failureInvoices
      */
     fun scheduleFailureInvoices(): ScheduledFuture<*>? {
 
-        logger.info { "Scheduled Failure Billing Task at ${ZonedDateTime.now() } with delay of X hours" }
-
         val failureBillingScheduleDelayHours = Configuration.config[DomainConfig.failureBillingScheduleDelayHours]
 
-        val executor = Executors.newSingleThreadScheduledExecutor()
+        logger.info { "Scheduled Failure Billing Task at ${ZonedDateTime.now() } with delay of $failureBillingScheduleDelayHours hours" }
 
         return executor.schedule(
                 failureBillingTask,
-                TimeUnit.HOURS.toMillis(failureBillingScheduleDelayHours),
-                TimeUnit.MILLISECONDS)
+                failureBillingScheduleDelayHours,
+                TimeUnit.HOURS)
     }
 }

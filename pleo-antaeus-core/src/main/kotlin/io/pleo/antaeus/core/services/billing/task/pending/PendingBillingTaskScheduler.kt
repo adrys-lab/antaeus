@@ -9,15 +9,16 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-
 class PendingBillingTaskScheduler(
         private val pendingBillingTask: PendingBillingTask) {
 
     private val logger = KotlinLogging.logger {}
+
     private val executor = Executors.newSingleThreadScheduledExecutor()
 
-    //this task runs on 1st day of each month for process all PENDING invoices
-
+    /*
+     * this task runs periodically on 1st day of each month for process all PENDING invoices
+     */
     fun schedulePendingInvoices(): ScheduledFuture<*>? {
 
         val now = ZonedDateTime.now()
@@ -25,8 +26,9 @@ class PendingBillingTaskScheduler(
 
         logger.info { "scheduled PendingBillingTaskScheduler at $now with expression $billingScheduleDelayExpression" }
 
-        return executor.schedule(
+        return executor.scheduleWithFixedDelay(
                 pendingBillingTask,
+                Schedule.parse(billingScheduleDelayExpression).next(now).toEpochSecond() - now.toEpochSecond(),
                 Schedule.parse(billingScheduleDelayExpression).next(now).toEpochSecond() - now.toEpochSecond(),
         TimeUnit.SECONDS)
     }
