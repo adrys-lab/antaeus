@@ -16,7 +16,7 @@ class FailureBillingTaskSchedulerTest {
     private val billingWrapper = FailureBillingTaskScheduler(failureBillingTask)
 
     @Test
-    fun `test scheduling delay until next 1st`() {
+    fun `test scheduling delay until next 3 hours`() {
 
         val schedule = billingWrapper.scheduleFailureInvoices()
 

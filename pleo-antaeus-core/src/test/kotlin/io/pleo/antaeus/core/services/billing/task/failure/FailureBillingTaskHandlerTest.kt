@@ -64,4 +64,21 @@ class FailureBillingTaskHandlerTest {
         verify(exactly = 0) { mailSender.send(any())}
     }
 
+    @Test
+    fun `assert when Exception dont try Retries and sends mail`() {
+
+        paymentProvider = mockk {
+            every { charge(any()) } throws Exception()
+        }
+
+        failureBillingTaskHandler = FailureBillingTaskHandler(customerService, paymentProvider, mailSender)
+
+        failureBillingTaskHandler.handle(failureInvoice)
+
+        verify(exactly = 1) { paymentProvider.charge(any())}
+        verify(exactly = 1) { mailSender.send(any())}
+
+        Assertions.assertFalse(FailureInvoiceObserver.instance.hasFailures())
+    }
+
 }

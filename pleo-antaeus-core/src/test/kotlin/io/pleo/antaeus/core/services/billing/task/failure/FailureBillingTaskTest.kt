@@ -70,4 +70,52 @@ class FailureBillingTaskTest {
         verify(exactly = 1) { failureBillingTaskHandler.handle(failureInvoice)}
     }
 
+    @Test
+    fun `assert incorrect invoice dont update invoice as PAID`() {
+
+        val slotInvoice = slot<Invoice>()
+
+        failureBillingTaskHandler = mockk {
+            every { handle(any()) } returns false
+        }
+
+        invoiceService = mockk {
+            every { update(capture(slotInvoice)) } returns failureInvoice
+        }
+
+        failureBillingTask = FailureBillingTask(invoiceService, failureBillingTaskHandler)
+
+        FailureInvoiceObserver.instance.notify(failureInvoice)
+
+        failureBillingTask.run()
+
+        verify(exactly = 0) { invoiceService.update(any())}
+    }
+
+    @Test
+    fun `assert FAILURE queue is empty after process`() {
+
+        val slotInvoice = slot<Invoice>()
+
+        failureBillingTaskHandler = mockk {
+            every { handle(any()) } returns true
+        }
+
+        invoiceService = mockk {
+            every { update(capture(slotInvoice)) } returns failureInvoice
+        }
+
+        failureBillingTask = FailureBillingTask(invoiceService, failureBillingTaskHandler)
+
+        FailureInvoiceObserver.instance.notify(failureInvoice)
+        FailureInvoiceObserver.instance.notify(failureInvoice)
+        FailureInvoiceObserver.instance.notify(failureInvoice)
+
+        failureBillingTask.run()
+
+        verify(exactly = 3) { failureBillingTaskHandler.handle(failureInvoice)}
+
+        Assertions.assertFalse(FailureInvoiceObserver.instance.hasFailures())
+    }
+
 }
