@@ -21,7 +21,7 @@ object Configuration {
                 addSpec(ServerConfig)
                 addSpec(DomainConfig)
             }
-            .from.yaml.watchFile(this.javaClass.getResource("/configuration.yml").file)
+            .from.yaml.watchFile(Configuration::class.java.getResource("/configuration.yml").file)
             .from.env()
             .from.systemProperties()
 }
