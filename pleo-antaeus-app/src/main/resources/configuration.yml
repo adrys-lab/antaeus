@@ -1,6 +1,5 @@
 server:
   port: 7000
-  executorThreadPool: 10
 
 domain:
   failureBillingScheduleDelayHours: 3

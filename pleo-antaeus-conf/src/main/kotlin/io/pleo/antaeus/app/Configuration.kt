@@ -6,7 +6,6 @@ import com.uchuhimo.konf.ConfigSpec
 //Configurations regarding Server environment.
 object ServerConfig : ConfigSpec("server") {
     val port by required<Int>()
-    val executorThreadPool by required<Int>()
 }
 
 //Configurations regarding Business logic and Domain specific.
