@@ -9,6 +9,7 @@
 ### Step 2
 - Start adding a new configuration module for Platform Conf Properties injection
 - Add new endpoint for retrieve invoices by status
+    - i used that for checking status after Scheules processes.
 
 ### Step 3
 - Start thinking how to solve the main exposed problem for the invoices 
@@ -20,8 +21,8 @@
                 - update the invoice as PAID in DB
             - If charge operation is false -> Means the customer has no balance
                 - so proceed to set this customer as ACTIVE false in our DB
-                    - This decision could be different, by trying that invoice charge more times, would be an appropiate soution too.
-                    - But setting the customer as NOT ACTIVE, and notifying him, would allow the customer to act uppon his criteria.
+                    - This decision could be different, by trying that invoice charge more times, which would be an apropiate solution too.
+                    - But setting the customer as NOT ACTIVE, and notifying him (via mail), would allow the customer to act uppon his criteria.
                     - Until customer is again ACTIVE, the customer would no have access to our Company business services. 
                 - Also send an email to the customer to notify this new status
             - If charge operation throws CustomerNotFoundException or CurrencyMismatchException
@@ -41,12 +42,13 @@
         - Once all the PENDING invoices in database are processed:
             - Check in the Observer memory class (FailureInvoiceObserver) if there are FAILURE invoices in the Queue
                 - If there are:
-                    - Schedule a single Task run with a delay of 3h to process each FAILURE invoice.
+                    - Schedule a single task to be run ONCE with a delay of 3h to process each FAILURE invoice.
                     - The FAILURE invoices are the ones which after 4 attempts, weren't able to be charged.
                     - For each FAILURE invoice, proceed to try to charge it.
-                    - Poll the Failure invoice from the Failures Queue.
+                    - So one by one, poll the FAILURE invoice from the FailureInvoiceObserver Queue and try to charge it.
                     - If the charge keeps failing:
                         - In this scenario there are no Retries logic.
+                            - we could add that feature but an invoice failing a total of 5 times, with a 3 hours of time difference, I guess is enough for trying it.
                         - So send an email to our IT & billing department to check it and fix this data.
                         - Invoice remains PENDING in our DB
                     - If charge operation is successful:
@@ -57,9 +59,11 @@
 - IMHO there are some fields missing in some tables/entities:
     - Invoices
         - Date of the invoice --> [NOT ADDED] -> but i think its important for an invoice, identify to which dates it belongs
+        - Status --> as mentioned in Step 3, new status as FAILURE could be added, but i considered that for the exposed challenge i had to work with the mapped informatin as it was (or at least, don't modify it so much)  
     - Customers
-        - Active or not active --> [ADDED] -> a customer can be active for our business, or not. If some invoice charge problems happen
-        - the Timezone of the customer --> [NOT ADDED] -> If a customer is from a country with different timezones, it should be taken into account when charge him an invoice.
+        - Active or not active --> [ADDED] -> a customer can be active for our business, or not. If some invoice charge problems happen.
+            - I added that field because it could become an inconsistent business logic, like for instance, letting a customer use our services without having balance to pay us for these services.
+        - the Timezone of the customer --> [NOT ADDED] -> If a customer is from a country with different timezones, it should be taken into account when charge him an invoice. This could become in a charge before his 1st of month.
 
 ### Step 5
 - check Gradle and Docker executions
@@ -75,6 +79,8 @@
         - I discarded this solution because of the huge resources that this would consume and how expensive it would be.
 - Another endpoint to force process PENDING invoices could be added to the REST layer ('/rest/v1/invoices/process'), this would allow easy-test too, but i didn't want to add any public REST resource like this as it exposes internal business procedures.
     - By contrast, we could expose this resource under user privileges/rights, but i considered this feature out of the scope of this Challenge.
+
+
 
 ## Antaeus
 
